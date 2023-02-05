@@ -14,13 +14,8 @@ class Move {
 
     int row;
     int column;
-    
     private Value value;
     
-    public void setValue(Value value) {
-        this.value = value;
-    }
-
     public Move(int row, int column, Value value) {
         this.row = row;
         this.column = column;
@@ -39,8 +34,12 @@ class Move {
         if(this.value == Value.X) {
             return 'X';
         } else {
-            return 'Y';
+            return 'O';
         }
+    }
+    
+    public void setValue(Value value) {
+        this.value = value;
     }
 }
 
@@ -66,54 +65,14 @@ public class Game {
         this.intializeGame();
 
         for(int round = 0; round < this.numberOfRounds; round++) {
-            
-            do {
-                this.output.println("");
-                this.output.println(this.currentPlayer.getName() + "'s turn");
-                this.board.printTo(this.output);
-                this.output.println("Enter your move [position like A2]: ");
-                Move move = this.currentPlayer.getMove(this.board);
-                this.board.makeMove(move);
-                this.isDone = this.board.getIsDone();
-                
-                if(this.isDone == true) {
-                    this.currentPlayer.setWinCount(
-                        this.currentPlayer.getWinCount() + 1
-                    );
-
-                    this.output.println("This Round's Winner " + this.currentPlayer.getName());
-
-                } else {
-                    if(this.board.getMoveCount() == 9) {
-                        this.isDone = true;
-                        this.output.println("This Round resulted in a draw");
-                    }
-                }
-
-                this.changeCurrentPlayer();
-            } while(! this.isDone);
-
+            this.runRound();
         }
 
-        if(player1.getWinCount() > player2.getWinCount()) {
-            this.output.printWinner(player1);
-        } else if(player1.getWinCount() < player2.getWinCount()) {
-            this.output.printWinner(player2);
-        } else {
-            this.output.println("DRAW");
-        }
-    }
-
-    private void changeCurrentPlayer() {
-        if(this.currentPlayer == player1) {
-            this.currentPlayer = player2;
-        } else {
-            this.currentPlayer = player1;
-        }
+        this.printWinnerTo(this.output);
     }
 
     private void intializeGame() {
-        this.output.printGameModes();
+        this.printGameModesTo(this.output);
         
         GameMode gameMode;
 
@@ -140,4 +99,59 @@ public class Game {
             throw e;
         }
     }
+
+    private void printGameModesTo(Output output) {
+        output.println("Please select the game mode");
+        output.println("1) Single player: Play against Computer");
+        output.println("2) Double player: Play against Friend");
+        output.println("Enter game mode: ");
+    }
+
+    private void runRound() {
+        do {
+            this.output.println("");
+            this.output.println(this.currentPlayer.getName() + "'s turn");
+            this.board.printTo(this.output);
+            this.output.println("Enter your move [position like A2]: ");
+
+            Move move = this.currentPlayer.getMove(this.board);
+            this.board.makeMove(move);
+            this.isDone = this.board.getIsDone();
+            
+            if(this.isDone == true) {
+                this.currentPlayer.setWinCount(
+                    this.currentPlayer.getWinCount() + 1
+                );
+
+                this.output.println("This Round's Winner " + this.currentPlayer.getName());
+
+            } else {
+                if(this.board.getMoveCount() == 9) {
+                    this.isDone = true;
+                    this.output.println("This Round resulted in a draw");
+                }
+            }
+
+            this.changeCurrentPlayer();
+        } while(! this.isDone);
+    }
+
+    private void printWinnerTo(Output output) {
+        if(player1.getWinCount() > player2.getWinCount()) {
+            output.println("\\_^_^_/ The Winner is : " + player1.getName() + " \\_^_^_/");
+        } else if(player1.getWinCount() < player2.getWinCount()) {
+            output.println("\\_^_^_/ The Winner is : " + player2.getName() + " \\_^_^_/");
+        } else {
+            output.println("DRAW");
+        }
+    }
+
+    private void changeCurrentPlayer() {
+        if(this.currentPlayer == player1) {
+            this.currentPlayer = player2;
+        } else {
+            this.currentPlayer = player1;
+        }
+    }
+
 }

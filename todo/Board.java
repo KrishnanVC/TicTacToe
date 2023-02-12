@@ -15,7 +15,7 @@ class Pair {
 
 public class Board {
 
-    char board[][] = this.initializeBoard();
+    char[][] board = this.initializeBoard();
     boolean isDone = false;
     int moveCount = 0;
 
@@ -55,11 +55,7 @@ public class Board {
         int column = move.getColumn();
         char value = move.getValue();
 
-        if(this.isRowDone(row, value) || this.isColumnDone(column, value) || this.isDiagonalDone(row, column, value)) {
-            return true;
-        }
-
-        return false;
+        return this.isRowDone(row, value) || this.isColumnDone(column, value) || this.isDiagonalDone(row, column, value);
     }
 
     private boolean isRowDone(int row, char value) {
@@ -82,10 +78,11 @@ public class Board {
     }
 
     private boolean isDiagonalDone(int row, int column, char value) {
+
         if((row == 1 || column == 1) && (row != 1 && column != 1)) {
             return false;
         }
-        
+
         int count = 0;
 
         for(int i=0; i<3;i++) {
@@ -106,18 +103,11 @@ public class Board {
             }
         }
 
-        if(count == 3) {
-            return true;
-        }
-
-        return false;
+        return count == 3;
     }
 
     private boolean isValidMove(Move move) {
-        if(this.board[move.getRow()][move.getColumn()] == '-') {
-            return true;
-        }
-        return false;
+        return this.board[move.getRow()][move.getColumn()] == '-';
     }
 
     public void printTo(Output output) {

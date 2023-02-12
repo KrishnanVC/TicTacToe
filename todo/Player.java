@@ -37,8 +37,8 @@ abstract class PlayerAbstract implements Player{
 
 class Human extends PlayerAbstract {
     
-    private Value value;
-    private Input input;
+    private final Value value;
+    private final Input input;
 
     public Human(String name, Value value, Input input) {
         this.value = value;
@@ -55,7 +55,7 @@ class Human extends PlayerAbstract {
 
 class Computer extends PlayerAbstract {
 
-    private Value value;
+    private final Value value;
 
     public Computer(String name, Value value) {
         this.value = value;

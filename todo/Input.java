@@ -11,7 +11,7 @@ public interface Input {
 
 class CommandLineInput implements Input {
 
-    private Scanner sc = new Scanner(System.in);
+    private final Scanner sc = new Scanner(System.in);
 
     @Override
     public int getNumberOfRounds() {
@@ -26,14 +26,14 @@ class CommandLineInput implements Input {
 
     @Override
     public GameMode getGameMode() {
-        int gameMode = sc.nextInt();
-        if(gameMode == 1) {
-            return GameMode.SINGLE_PLAYER;
-        } else if(gameMode == 2) {
-            return GameMode.DOUBLE_PLAYER;
-        } else {
+        int modeID = sc.nextInt();
+        GameMode gameMode = GameMode.getGameModeByID(modeID);
+
+        if (gameMode == null) {
             throw new IllegalArgumentException("Game mode can only be [0/1]");
         }
+
+        return gameMode;
     }
 
     @Override

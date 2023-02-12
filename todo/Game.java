@@ -1,13 +1,40 @@
 package todo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 enum GameMode {
-    SINGLE_PLAYER,
-    DOUBLE_PLAYER
+    SINGLE_PLAYER(1),
+    DOUBLE_PLAYER(2);
+
+    private static final Map<Integer, GameMode>  instanceByID = new HashMap<>();
+    final int modeID;
+    GameMode(int modeID) {
+        this.modeID = modeID;
+    }
+
+    static {
+        for (GameMode gameMode : GameMode.values()){
+            instanceByID.put(gameMode.modeID, gameMode);
+        }
+    }
+
+    public static GameMode getGameModeByID(int modeID) {
+        return instanceByID.get(modeID);
+    }
 }
 
 enum Value {
-    X,
-    O
+    X('X'),
+    O('O');
+
+    char ch;
+    Value(char ch) {
+        this.ch = ch;
+    }
+    public char toChar(){
+        return this.ch;
+    }
 };
 
 class Move {
@@ -31,11 +58,12 @@ class Move {
     }
 
     public char getValue() {
-        if(this.value == Value.X) {
+        /*if(this.value == Value.X) {
             return 'X';
         } else {
             return 'O';
-        }
+        }*/
+        return this.value.toChar();
     }
     
     public void setValue(Value value) {
@@ -46,13 +74,12 @@ class Move {
 public class Game {
     
     private int numberOfRounds;
-    private boolean isDone = false;
-    private Board board;
+    private final Board board;
     private Player player1;
     private Player player2;
     private Player currentPlayer;
-    private Input input;
-    private Output output;
+    private final Input input;
+    private final Output output;
 
     public Game(Input input, Output output, Board board) {
         this.input = input;
@@ -79,6 +106,7 @@ public class Game {
         try {
             gameMode = this.input.getGameMode();
         } catch (IllegalArgumentException e) {
+            //TODO: Why do we need to catch this ?
             throw e;
         }
         if(gameMode == GameMode.SINGLE_PLAYER) {
@@ -96,6 +124,7 @@ public class Game {
         try {
             this.numberOfRounds = this.input.getNumberOfRounds();
         } catch (IllegalArgumentException e) {
+            //TODO: Why do we need to catch this ?
             throw e;
         }
     }
@@ -108,6 +137,7 @@ public class Game {
     }
 
     private void runRound() {
+        boolean isDone = false;
         do {
             this.output.println("");
             this.output.println(this.currentPlayer.getName() + "'s turn");
@@ -116,9 +146,9 @@ public class Game {
 
             Move move = this.currentPlayer.getMove(this.board);
             this.board.makeMove(move);
-            this.isDone = this.board.getIsDone();
+            isDone = this.board.getIsDone();
             
-            if(this.isDone == true) {
+            if(isDone) {
                 this.currentPlayer.setWinCount(
                     this.currentPlayer.getWinCount() + 1
                 );
@@ -127,13 +157,13 @@ public class Game {
 
             } else {
                 if(this.board.getMoveCount() == 9) {
-                    this.isDone = true;
+                    isDone = true;
                     this.output.println("This Round resulted in a draw");
                 }
             }
 
             this.changeCurrentPlayer();
-        } while(! this.isDone);
+        } while(!isDone);
     }
 
     private void printWinnerTo(Output output) {
